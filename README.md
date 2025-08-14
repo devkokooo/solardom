@@ -1,4 +1,8 @@
-# solardom
+# ☀️ SolarDOM
+
+A custom DOM implementation
+
+## Installation
 
 To install dependencies:
 
