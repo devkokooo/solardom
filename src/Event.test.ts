@@ -1,6 +1,11 @@
 import { test, expect, describe, vi } from "vitest";
 import { Event } from "./Event";
 
+test("type should be defined", () => {
+  const e = new Event("type");
+  expect(e.type).toEqual("type");
+});
+
 test("should have default options", () => {
   const e = new Event("default");
   expect(e.bubbles).toBeFalsy;

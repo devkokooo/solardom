@@ -17,7 +17,7 @@ describe("dispatchEvent(event)", () => {
     const target = new EventTarget();
 
     target.dispatchEvent(e);
-    
+
     expect(e.target).toBe(target);
   });
 });

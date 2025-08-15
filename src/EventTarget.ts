@@ -1,5 +1,5 @@
 import type { AbortSignal } from "./AbortSignal";
-import type { Event } from "./Event";
+import type { Event, EventImpl } from "./Event";
 import type { DOMString } from "./WebIDL.types";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
@@ -97,7 +97,8 @@ export class EventTarget {
    * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
    */
   dispatchEvent(event: Event): boolean {
-    event._setTarget(this);
+    (event as EventImpl)._setTarget(this);
+    (event as EventImpl)._setCurrentTarget(this);
 
     return true;
   }
