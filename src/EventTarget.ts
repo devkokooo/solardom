@@ -2,8 +2,49 @@ import type { AbortSignal } from "./AbortSignal";
 import type { Event, EventImpl } from "./Event";
 import type { DOMString } from "./WebIDL.types";
 
-// https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
-export class EventTarget {
+/**
+ * Implemented by objects that can receive events and may have listeners for
+ * them. In other words, any target of events implements the three methods
+ * associated with this interface.
+ * 
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
+ */
+interface EventTarget {
+  /**
+   * Registers an event handler of a specific event type on the `EventTarget`.
+   * 
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+   */
+  addEventListener(
+    type: DOMString,
+    listener: EventListener | undefined,
+    options: AddEventListenerOptions | boolean
+  ): void;
+
+  /**
+   * Removes an event listener from the `EventTarget`.
+   * 
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
+   */
+  removeEventListener(
+    type: DOMString,
+    listener: EventListener | undefined,
+    options: EventListenerOptions | boolean
+  ): void;
+
+  /**
+   * Dispatches an event to this `EventTarget`.
+   * 
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+   */
+  dispatchEvent(event: Event): boolean;
+}
+
+interface EventTargetConstructor {
+  new(): EventTarget;
+}
+
+export class EventTargetImpl implements EventTarget {
   constructor() { }
 
   #listeners: Map<DOMString, EventListener[]> = new Map();
@@ -40,7 +81,6 @@ export class EventTarget {
     }
   }
 
-  // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
   removeEventListener(
     type: DOMString,
     listener: EventListener | undefined,
@@ -64,38 +104,6 @@ export class EventTarget {
     }
   }
 
-  /**
-   * The `dispatchEvent()` method of the `EventTarget` sends an `Event` to the
-   * object, (synchronously) invoking the affected event listeners in the
-   * appropriate order. The normal event processing rules (including the
-   * capturing and optional bubbling phase) also apply to events dispatched
-   * manually with `dispatchEvent()`.
-   * 
-   * Calling `dispatchEvent()` is the last step to *firing an event*. The event
-   * should have already been created and initialized using an `Event()`
-   * constructor.
-   * 
-   * > Note: When calling this method, the `Event.target` property is initialized
-   * to the current `EventTarget`.
-   * 
-   * Unlike "native" events, which are fired by the browser and invoke event
-   * handlers asynchronously via the event loop, `dispatchEvent()` invokes event
-   * handlers *synchronously*. All applicable event handlers are called and
-   * return before `dispatchEvent()` returns.
-   * 
-   * @example dispatchEvent(event)
-   * 
-   * @param event The `Event` object to dispatch. Its `Event.target` property
-   * will be set to the current `EventTarget`.
-   * @returns `false` if `event` is cancelable, and at least one of the
-   * event handlers which received `event` called `Event.preventDefault()`.
-   * Otherwise `true`.
-   * 
-   * @throws `InvalidStateError` `DomException`
-   * Thrown if the event's type was not specified during event initialization.
-   * 
-   * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
-   */
   dispatchEvent(event: Event): boolean {
     (event as EventImpl)._setTarget(this);
     (event as EventImpl)._setCurrentTarget(this);
@@ -117,3 +125,6 @@ interface AddEventListenerOptions extends EventListenerOptions {
   once?: boolean;
   signal?: AbortSignal;
 }
+
+const EventTarget: EventTargetConstructor = EventTargetImpl;
+export { EventTarget };
