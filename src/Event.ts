@@ -123,7 +123,13 @@ export class EventImpl implements Event {
     this.#bubbles = options?.bubbles || false;
     this.#cancelable = options?.cancelable || false;
     this.#composed = options?.composed || false;
+
+    this._isInitialized = true;
   }
+
+  _isInitialized: boolean;
+  _hasDispatched: boolean = false;
+  _isCanceled: boolean = false;
 
   #bubbles: boolean;
   #cancelable: boolean;
@@ -149,6 +155,9 @@ export class EventImpl implements Event {
 
   _setCurrentTarget(newTarget: EventTarget): void {
     this.#currentTarget = newTarget;
+  }
+  _setIsTrusted(newTrust: boolean): void {
+    this.#isTrusted = newTrust;
   }
   _setTarget(newTarget: EventTarget): void {
     this.#target = newTarget;

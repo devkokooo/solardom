@@ -1,4 +1,5 @@
 import type { AbortSignal } from "./AbortSignal";
+import { DOMException } from "./DOMException";
 import type { Event, EventImpl } from "./Event";
 import type { DOMString } from "./WebIDL.types";
 
@@ -44,11 +45,17 @@ interface EventTargetConstructor {
   new(): EventTarget;
 }
 
+/**
+ * @see https://dom.spec.whatwg.org/#interface-eventtarget
+ */
 export class EventTargetImpl implements EventTarget {
   constructor() { }
 
   #listeners: Map<DOMString, EventListener[]> = new Map();
 
+  /**
+   * @see https://dom.spec.whatwg.org/#dom-eventtarget-addeventlistener
+   */
   addEventListener(
     type: DOMString,
     listener: EventListener | undefined,
@@ -81,6 +88,9 @@ export class EventTargetImpl implements EventTarget {
     }
   }
 
+  /**
+   * @see https://dom.spec.whatwg.org/#dom-eventtarget-removeeventlistener
+   */
   removeEventListener(
     type: DOMString,
     listener: EventListener | undefined,
@@ -104,11 +114,27 @@ export class EventTargetImpl implements EventTarget {
     }
   }
 
+  /**
+   * @see https://dom.spec.whatwg.org/#dom-eventtarget-dispatchevent
+   */
   dispatchEvent(event: Event): boolean {
-    (event as EventImpl)._setTarget(this);
-    (event as EventImpl)._setCurrentTarget(this);
+    const e = event as EventImpl;
 
-    return true;
+    // 1. If event's dispatch flag is set, or if its initialized flag is not set,
+    // then throw an "InvalidStateError" DOMException.
+    if (!e._isInitialized)
+      throw new DOMException("Event is not initialized", "InvalidStateError");
+    if (e._hasDispatched)
+      throw new DOMException("Event is already being dispatched", "InvalidStateError");
+
+    // 2. Initialize event's `isTrusted` attribute to false.
+    e._setIsTrusted(false);
+
+    e._setTarget(this);
+    e._setCurrentTarget(this);
+
+    // 3. Return the result of dispatching event to this.
+    return e._isCanceled ? false : true;
   }
 }
 
