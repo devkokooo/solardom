@@ -10,13 +10,13 @@ export class EventTarget {
 
   addEventListener(
     type: DOMString,
-    listener?: EventListener,
+    listener: EventListener | undefined,
     options: AddEventListenerOptions | boolean = {
       capture: false,
       once: false,
       passive: false,
     }
-  ) {
+  ): void {
     if (this.#listeners.has(type)) {
       const prevListeners = this.#listeners.get(type)!;
 
@@ -43,11 +43,11 @@ export class EventTarget {
   // https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener
   removeEventListener(
     type: DOMString,
-    listener?: EventListener,
+    listener: EventListener | undefined,
     options: EventListenerOptions | boolean = {
       capture: false,
     }
-  ) {
+  ): void {
     /*
       TODO: if a listener is registered twice, one with the capture flag set and
       one without, you must remove each one separately. Removal of a capturing
@@ -64,8 +64,42 @@ export class EventTarget {
     }
   }
 
-  dispatchEvent(event: Event) {
+  /**
+   * The `dispatchEvent()` method of the `EventTarget` sends an `Event` to the
+   * object, (synchronously) invoking the affected event listeners in the
+   * appropriate order. The normal event processing rules (including the
+   * capturing and optional bubbling phase) also apply to events dispatched
+   * manually with `dispatchEvent()`.
+   * 
+   * Calling `dispatchEvent()` is the last step to *firing an event*. The event
+   * should have already been created and initialized using an `Event()`
+   * constructor.
+   * 
+   * > Note: When calling this method, the `Event.target` property is initialized
+   * to the current `EventTarget`.
+   * 
+   * Unlike "native" events, which are fired by the browser and invoke event
+   * handlers asynchronously via the event loop, `dispatchEvent()` invokes event
+   * handlers *synchronously*. All applicable event handlers are called and
+   * return before `dispatchEvent()` returns.
+   * 
+   * @example dispatchEvent(event)
+   * 
+   * @param event The `Event` object to dispatch. Its `Event.target` property
+   * will be set to the current `EventTarget`.
+   * @returns `false` if `event` is cancelable, and at least one of the
+   * event handlers which received `event` called `Event.preventDefault()`.
+   * Otherwise `true`.
+   * 
+   * @throws `InvalidStateError` `DomException`
+   * Thrown if the event's type was not specified during event initialization.
+   * 
+   * https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/dispatchEvent
+   */
+  dispatchEvent(event: Event): boolean {
+    event._setTarget(this);
 
+    return true;
   }
 }
 

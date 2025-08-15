@@ -1,4 +1,4 @@
-import type { EventTarget } from "./EventTarget";
+import { EventTarget } from "./EventTarget";
 
 // https://developer.mozilla.org/en-US/docs/Web/API/Event
 export class Event {
@@ -14,7 +14,14 @@ export class Event {
   }
 
   readonly type: string;
-  readonly target?: EventTarget;
+  #target?: EventTarget;
+  get target(): EventTarget | undefined {
+    return this.#target;
+  }
+  _setTarget(newTarget: EventTarget): void {
+    this.#target = newTarget;
+  }
+
   readonly currentTarget?: EventTarget;
   composedPath(): EventTarget[] {}
 
