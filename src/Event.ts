@@ -117,6 +117,9 @@ enum EventPhase {
   BUBBLING_PHASE = 3,
 }
 
+/**
+ * @see https://dom.spec.whatwg.org/#interface-event
+ */
 export class EventImpl implements Event {
   constructor(type: DOMString, options?: EventInit) {
     this.#type = type;
