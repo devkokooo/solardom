@@ -1,6 +1,6 @@
 # ☀️ SolarDOM
 
-A custom DOM implementation
+A custom DOM implementation, inspired by [jsdom](https://github.com/jsdom/jsdom) and [happy-dom](https://github.com/capricorn86/happy-dom)
 
 ## Installation
 
