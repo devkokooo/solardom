@@ -41,7 +41,7 @@ interface EventTarget {
   dispatchEvent(event: Event): boolean;
 }
 
-interface EventTargetConstructor {
+export interface EventTargetConstructor {
   new(): EventTarget;
 }
 
