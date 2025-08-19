@@ -112,9 +112,9 @@ export interface Node extends EventTarget {
   readonly ownerDocument: Document | null;
 
   /**
-   * Returns a `Node` that is the parent of this node. If there is no such node,
-   * like if this node is the top of the tree or if it doesn't participate in a
-   * tree, this property returns `null`.
+   * Returns a `Node` that is the parent of this node. If there is no such node
+   * — for example, if this node is the top of the tree, or if it doesn't
+   * participate in a tree — this property returns `null`.
    * 
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Node/parentNode
    */
